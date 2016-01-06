@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true"
+    android:id="@+id/anim_first_left_pinch_in">
+    <item android:drawable="@drawable/first_left_initial" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_01" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_02" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_03" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_04" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_05" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_04" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_03" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_02" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_01" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_02" android:duration="35" />
+    <item android:drawable="@drawable/first_left_pinch_in_01" android:duration="35" />
+</animation-list>
