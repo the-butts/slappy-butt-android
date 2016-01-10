@@ -1,18 +1,26 @@
 package com.thebutts.slappybutt;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
-public class FreeSlappingActivity extends Activity {
+import com.thebutts.slappybutt.Helpers.*;
+
+public class FreeSlappingActivity extends Activity implements SensorEventListener {
 
     AnimationDrawable rightButtSlappAnimation;
     AnimationDrawable leftButtSlappAnimation;
@@ -35,12 +43,12 @@ public class FreeSlappingActivity extends Activity {
     AnimationDrawable rightButtPinchOut;
     AnimationDrawable leftButtPinchOut;
 
-
     ImageView mLevtButtContainer;
     ImageView mRightButtContainer;
 
+    FrameLayout mSlappinngFrame;
 
-   // AnimateTask rightButtAnimateTask;
+    Integer mScreenWidth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,317 +59,276 @@ public class FreeSlappingActivity extends Activity {
 
         setContentView(R.layout.activity_free_slapping);
 
-        setupUiEvents();
+        getScreenWidth();
         SetupAnimations();
+        setupUiEvents();
     }
 
-    void SetupAnimations(){
-
-      //  rightButtSlappAnimation = (AnimationDrawable)   mRightButtContainer.getBackground();
-        Log.d("Butte", "on setup animations");
-
-        mRightButtContainer = (ImageView) findViewById(R.id.ivRightButt);
-        mLevtButtContainer = (ImageView) findViewById(R.id.ivLeftButt);
-
-//
+    void SetupAnimations() {
         mRightButtContainer = (ImageView) findViewById(R.id.ivRightButt);
         mRightButtContainer.setBackgroundResource(R.drawable.first_right_initial);
-//
-//
-//        // set right but animations
-//        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_butt_slap);
-//        rightButtSlappAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
-//
-////        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_right);
-////        rightButtFlintRight = (AnimationDrawable) mRightButtContainer.getBackground();
-//
-//        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_left);
-//        rightButtFlintLeft = (AnimationDrawable) mRightButtContainer.getBackground();
-//
-//        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_up);
-//        rightButtFlintUp = (AnimationDrawable) mRightButtContainer.getBackground();
-//
-//        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_down);
-//        rightButtFlintDown = (AnimationDrawable) mRightButtContainer.getBackground();
-//
-//        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_pinch_in);
-//        rightButtPinchIn = (AnimationDrawable) mRightButtContainer.getBackground();
-//
-//        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_pinch_out);
-//        rightButtPinchOut = (AnimationDrawable) mRightButtContainer.getBackground();
+        mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        // set left but animations
+        mLevtButtContainer = (ImageView) findViewById(R.id.ivLeftButt);
         mLevtButtContainer.setBackgroundResource(R.drawable.first_left_initial);
+        mLevtButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-////        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_right);
-////        leftButtFlintRight = (AnimationDrawable) mLevtButtContainer.getBackground();
-//
-//        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_left);
-//        leftButtSFlintLeft = (AnimationDrawable) mLevtButtContainer.getBackground();
-//
-//        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_up);
-//        leftButtSFlintUp = (AnimationDrawable) mLevtButtContainer.getBackground();
-//
-//        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_down);
-//        leftButtFlintDown = (AnimationDrawable) mLevtButtContainer.getBackground();
-//
-//        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_pinch_in);
-//        leftButtPinchIn = (AnimationDrawable) mLevtButtContainer.getBackground();
-//
-//        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_pinch_out);
-//        leftButtPinchOut = (AnimationDrawable) mLevtButtContainer.getBackground();
-
+        mSlappinngFrame = (FrameLayout) findViewById(R.id.slappingFrame);
     }
 
+    void getScreenWidth() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        mScreenWidth = metrics.widthPixels;
+    }
 
     void setupUiEvents() {
-        Button firstButton = (Button) findViewById(R.id.btn_slapp_left_butt);
-        firstButton.setOnClickListener(new View.OnClickListener() {
+        final GestureDetector gestureDetector = new GestureDetector(this, new SwipeGestureDetector() {
             @Override
-            public void onClick(View v) {
-                FreeSlappingActivity.this.onClickBtnLeftButt((Button) v);
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+                String LOGTAG = "Custom detector";
+
+                switch (getSlope(e1.getX(), e1.getY(), e2.getX(), e2.getY())) {
+                    case 1:
+                        Log.d(LOGTAG, "top");
+                        FreeSlappingActivity.this.onClickFlintUp();
+                        return true;
+                    case 2:
+                        Log.d(LOGTAG, "left");
+                        FreeSlappingActivity.this.onClickFlintLeft();
+                        return true;
+                    case 3:
+                        FreeSlappingActivity.this.onClickFlintDown();
+                        Log.d(LOGTAG, "down");
+                        return true;
+                    case 4:
+                        FreeSlappingActivity.this.onClickFlintRight();
+                        Log.d(LOGTAG, "right");
+                        return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                Log.i("onSingleTap :", "" + e.getAction());
+
+                float x = e.getX();
+
+                if (x < mScreenWidth / 2) {
+                    FreeSlappingActivity.this.onClickBtnLeftButt();
+                } else {
+                    FreeSlappingActivity.this.onClickBtnRightButt();
+                }
+
+                return true;
             }
         });
 
-        Button secondButton = (Button) findViewById(R.id.btn_slap_right_butt);
-
-        Log.d("Butte", "on secund button get" + secondButton);
-        secondButton.setOnClickListener(new View.OnClickListener() {
+        final ScaleGestureDetector scaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.SimpleOnScaleGestureListener() {
             @Override
-            public void onClick(View v) {
-               // Log.d("Butte", "on click listener right butt");
-                FreeSlappingActivity.this.onClickBtnRightButt((Button) v);
+            public boolean onScale(ScaleGestureDetector detector) {
+
+                float scaleFactor = detector.getScaleFactor();
+
+                if (scaleFactor > 1) {
+                    FreeSlappingActivity.this.onClickPinchOut();
+                    return true;
+                } else {
+                    FreeSlappingActivity.this.onClickPinchIn();
+                    return false;
+                }
+            }
+
+            @Override
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                return true;
+            }
+
+            @Override
+            public void onScaleEnd(ScaleGestureDetector detector) {
             }
         });
 
-        Button btnFlintLeft = (Button) findViewById(R.id.btnFlintLeft);
-        btnFlintLeft.setOnClickListener(new View.OnClickListener() {
+        final View.OnTouchListener scaleGestureListener = new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                FreeSlappingActivity.this.onClickFlintLeft((Button) v);
-            }
-        });
+            public boolean onTouch(View v, MotionEvent event) {
 
-        Button btnFlintRight = (Button) findViewById(R.id.btnFlintRight);
-        btnFlintRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FreeSlappingActivity.this.onClickFlintRight((Button) v);
-            }
-        });
+                int action = event.getAction();
 
-        Button btnFlintDown = (Button) findViewById(R.id.btnFlintDown);
-        btnFlintDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FreeSlappingActivity.this.onClickFlintDown((Button) v);
-            }
-        });
+                switch(action & MotionEvent.ACTION_MASK)
+                {
+                    case MotionEvent.ACTION_POINTER_DOWN:
+                        FreeSlappingActivity.this.onClickBtnLeftButt();
+                        FreeSlappingActivity.this.onClickBtnRightButt();
+                        break;
+                }
 
-        Button btnFlintUp = (Button) findViewById(R.id.btnFlintUp);
-        btnFlintUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FreeSlappingActivity.this.onClickFlintUp((Button) v);
-            }
-        });
+                boolean res = gestureDetector.onTouchEvent(event);
 
-        Button btnPinchIn = (Button) findViewById(R.id.btnPinchIn);
-        btnPinchIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FreeSlappingActivity.this.onClickPinchIn((Button) v);
-            }
-        });
+                if (res) {
+                    return true;
+                }
 
-        Button btnPinchIOut= (Button) findViewById(R.id.btnPinchOut);
-        btnPinchIOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FreeSlappingActivity.this.onClickPinchOut((Button) v);
+                res = scaleGestureDetector.onTouchEvent(event);
+
+                return res;
             }
-        });
+        };
+
+        mSlappinngFrame.setOnTouchListener(scaleGestureListener);
     }
 
-    private void onClickPinchOut(Button v) {
-        Log.d("Butte", "on right butt pinch out");
+    private void onClickPinchOut() {
         mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_pinch_out);
         rightButtPinchOut = (AnimationDrawable) mRightButtContainer.getBackground();
 
         mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_pinch_out);
         leftButtPinchOut = (AnimationDrawable) mLevtButtContainer.getBackground();
 
+        this.stopAllActiveAnimations();
 
-        if(rightButtPinchOut.isRunning()){
-            mRightButtContainer.setLayerType(View.LAYER_TYPE_NONE, null);
-            rightButtPinchOut.stop();
-            leftButtPinchOut.stop();
-        }
-
-
-        mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         rightButtPinchOut.start();
         leftButtPinchOut.start();
     }
 
-    private void onClickPinchIn(Button v) {
-
-        Log.d("Butte", "on right butt pinch in");
+    private void onClickPinchIn() {
         mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_pinch_in);
         rightButtPinchIn = (AnimationDrawable) mRightButtContainer.getBackground();
 
         mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_pinch_in);
         leftButtPinchIn = (AnimationDrawable) mLevtButtContainer.getBackground();
 
+        this.stopAllActiveAnimations();
 
-        if(rightButtPinchIn.isRunning()){
-            mRightButtContainer.setLayerType(View.LAYER_TYPE_NONE, null);
-            rightButtPinchIn.stop();
-            leftButtPinchIn.stop();
-        }
-
-
-        mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         rightButtPinchIn.start();
         leftButtPinchIn.start();
-
     }
 
-    private void onClickFlintUp(Button v) {
-
-        Log.d("Butte", "on right butt flint up");
+    private void onClickFlintUp() {
         mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_up);
         rightButtFlintUp = (AnimationDrawable) mRightButtContainer.getBackground();
 
         mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_up);
         leftButtSFlintUp = (AnimationDrawable) mLevtButtContainer.getBackground();
 
+        this.stopAllActiveAnimations();
 
-        if(rightButtFlintUp.isRunning()){
-            mRightButtContainer.setLayerType(View.LAYER_TYPE_NONE, null);
-            rightButtFlintUp.stop();
-            leftButtSFlintUp.stop();
-        }
-
-
-        mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         rightButtFlintUp.start();
         leftButtSFlintUp.start();
-
     }
 
-    private void onClickFlintDown(Button v) {
-
-        Log.d("Butte", "on right butt flint down");
+    private void onClickFlintDown() {
         mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_down);
         rightButtFlintDown = (AnimationDrawable) mRightButtContainer.getBackground();
 
         mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_down);
         leftButtFlintDown = (AnimationDrawable) mLevtButtContainer.getBackground();
 
+        this.stopAllActiveAnimations();
 
-        if(rightButtFlintDown.isRunning()){
-            mRightButtContainer.setLayerType(View.LAYER_TYPE_NONE, null);
-            rightButtFlintDown.stop();
-            leftButtFlintDown.stop();
-        }
-
-
-        mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         rightButtFlintDown.start();
         leftButtFlintDown.start();
-
     }
 
-    private void onClickFlintRight(Button v) {
-
-        Log.d("Butte", "on right butt flint right");
+    private void onClickFlintRight() {
         mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_right);
         rightButtFlintRight = (AnimationDrawable) mRightButtContainer.getBackground();
 
         mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_right);
         leftButtFlintRight = (AnimationDrawable) mLevtButtContainer.getBackground();
 
+        this.stopAllActiveAnimations();
 
-        if(rightButtFlintRight.isRunning()){
-            mRightButtContainer.setLayerType(View.LAYER_TYPE_NONE, null);
-            rightButtFlintRight.stop();
-            leftButtFlintRight.stop();
-        }
-
-
-        mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         rightButtFlintRight.start();
         leftButtFlintRight.start();
     }
 
-    private void onClickFlintLeft(Button button) {
-
-        Log.d("Butte", "on right butt flint left");
+    private void onClickFlintLeft() {
         mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_left);
         rightButtFlintLeft = (AnimationDrawable) mRightButtContainer.getBackground();
 
         mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_left);
         leftButtSFlintLeft = (AnimationDrawable) mLevtButtContainer.getBackground();
 
+        this.stopAllActiveAnimations();
 
-        if(rightButtFlintLeft.isRunning()){
-            mRightButtContainer.setLayerType(View.LAYER_TYPE_NONE, null);
+        rightButtFlintLeft.start();
+        leftButtSFlintLeft.start();
+    }
+
+    private void onClickBtnRightButt() {
+        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_butt_slap);
+        rightButtSlappAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
+
+        if (rightButtSlappAnimation.isRunning()) {
+            rightButtSlappAnimation.stop();
+        }
+
+        rightButtSlappAnimation.start();
+    }
+
+    private void onClickBtnLeftButt() {
+        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_butt_slap);
+        leftButtSlappAnimation = (AnimationDrawable) mLevtButtContainer.getBackground();
+
+        if (leftButtSlappAnimation.isRunning()) {
+            leftButtSlappAnimation.stop();
+        }
+
+        leftButtSlappAnimation.start();
+    }
+
+    private void stopAllActiveAnimations() {
+        if (leftButtSlappAnimation != null && leftButtSlappAnimation.isRunning()) {
+            leftButtSlappAnimation.stop();
+        }
+
+        if (rightButtSlappAnimation != null && rightButtSlappAnimation.isRunning()) {
+            rightButtSlappAnimation.stop();
+        }
+
+        if (rightButtFlintLeft != null && (rightButtFlintLeft.isRunning() || leftButtSFlintLeft.isRunning())) {
             rightButtFlintLeft.stop();
             leftButtSFlintLeft.stop();
         }
 
-
-        mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        rightButtFlintLeft.start();
-        leftButtSFlintLeft.start();
-
-    }
-
-    private void onClickBtnRightButt(Button v) {
-
-        Log.d("Butte", "on right butt slap");
-        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_butt_slap);
-        rightButtSlappAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
-
-
-
-        if(rightButtSlappAnimation.isRunning()){
-            mRightButtContainer.setLayerType(View.LAYER_TYPE_NONE, null);
-            rightButtSlappAnimation.stop();
+        if (rightButtFlintDown != null && (rightButtFlintDown.isRunning() || leftButtFlintDown.isRunning())) {
+            rightButtFlintDown.stop();
+            leftButtFlintDown.stop();
         }
 
-
-        mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        rightButtSlappAnimation.start();
-
-         rightButtSlappAnimation.start();
-        //TextView textView = (TextView) findViewById(R.id.tv_butt);
-     //   textView.setText("Slapped right butt");
-
-    }
-
-    private void onClickBtnLeftButt(Button v) {
-
-        Log.d("Butte", "on left butt slap");
-        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_butt_slap);
-        leftButtSlappAnimation = (AnimationDrawable) mLevtButtContainer.getBackground();
-
-        if(leftButtSlappAnimation.isRunning()){
-            mLevtButtContainer.setLayerType(View.LAYER_TYPE_NONE, null);
-            leftButtSlappAnimation.stop();
+        if (rightButtFlintRight != null && (rightButtFlintRight.isRunning() || leftButtFlintRight.isRunning())) {
+            rightButtFlintRight.stop();
+            leftButtFlintRight.stop();
         }
 
+        if (rightButtFlintUp != null && (rightButtFlintUp.isRunning() || leftButtSFlintUp.isRunning())) {
+            rightButtFlintUp.stop();
+            leftButtSFlintUp.stop();
+        }
 
-        mLevtButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        leftButtSlappAnimation.start();
+        if (rightButtPinchIn != null && (rightButtPinchIn.isRunning() || leftButtPinchIn.isRunning())) {
+            rightButtPinchIn.stop();
+            leftButtPinchIn.stop();
+        }
 
-        // rightButtSlappAnimation.stop();
-       // TextView textView = (TextView) findViewById(R.id.tv_butt);
-       // textView.setText("Slapped left butt");
+        if (rightButtPinchOut != null && (rightButtPinchOut.isRunning() || leftButtPinchOut.isRunning())) {
+            rightButtPinchOut.stop();
+            leftButtPinchOut.stop();
+        }
     }
 
-    private void stopAllActiveAnimations(){
-        // TODO: do it
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }
