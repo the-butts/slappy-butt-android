@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp"
-    android:background="#9fd1f4"
     android:clickable="false">
 
     <!--<LinearLayout-->
@@ -29,7 +28,12 @@
     <!--</LinearLayout>-->
 
 
-        <include
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/freeSlapActivityLayout"></FrameLayout>
+
+    <include
             layout="@layout/animation_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

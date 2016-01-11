@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true"
+    android:id="@+id/anim_first_right_shake">
+    <item android:drawable="@drawable/anim_first_right_butt_slap" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_flint_down" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_flint_left" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_flint_up" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_flint_right" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_flint_down" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_flint_left" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_flint_up" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_flint_right" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_pinch_in" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_pinch_out" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_pinch_in" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_pinch_out" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_pinch_in" android:duration="500" />
+    <item android:drawable="@drawable/anim_first_right_pinch_out" android:duration="500" />
+</animation-list>
