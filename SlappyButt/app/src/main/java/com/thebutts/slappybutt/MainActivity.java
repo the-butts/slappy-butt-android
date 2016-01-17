@@ -8,6 +8,8 @@ import android.widget.Button;
 
 public class MainActivity extends ActionBarActivity {
 
+    public final static String apiURL = "http://localhost:4380/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,10 +26,23 @@ public class MainActivity extends ActionBarActivity {
                 MainActivity.this.onClickStartFreeSlapping((Button) v);
             }
         });
+
+        Button secondButton = (Button) findViewById(R.id.register);
+        secondButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.onClickStartRegister((Button) v);
+            }
+        });
     }
 
     private void onClickStartFreeSlapping(Button b) {
         Intent intent = new Intent(this, FreeSlappingActivity.class);
+        startActivity(intent);
+    }
+
+    private void onClickStartRegister(Button b) {
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 }
