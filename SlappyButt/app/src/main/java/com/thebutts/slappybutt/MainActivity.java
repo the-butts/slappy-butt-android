@@ -27,7 +27,7 @@ public class MainActivity extends ActionBarActivity {
         firstButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.this.onClickStartFreeSlapping((Button) v);
+                MainActivity.this.onClickStartLogin((Button) v);
             }
         });
 
@@ -40,13 +40,13 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    private void onClickStartFreeSlapping(Button b) {
-        Intent intent = new Intent(this, FreeSlappingActivity.class);
+    private void onClickStartRegister(Button b) {
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 
-    private void onClickStartRegister(Button b) {
-        Intent intent = new Intent(this, RegisterActivity.class);
+    private void onClickStartLogin(Button b) {
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 }
