@@ -1,9 +1,11 @@
 package com.thebutts.slappybutt;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -19,6 +21,20 @@ public class MainActivity extends ActionBarActivity {
             StrictMode.setThreadPolicy(policy);
         }
 
+        SharedPreferences prefs = getSharedPreferences("MyPrefsFile", 0);
+        String restoredText = prefs.getString("token", null);
+        if (restoredText != null) {
+            View b = findViewById(R.id.btn_register);
+            b.setVisibility(View.INVISIBLE);
+            View k = findViewById(R.id.logout);
+            k.setVisibility(View.VISIBLE);
+        }
+        else if(restoredText==null){
+            View b = findViewById(R.id.logout);
+            b.setVisibility(View.INVISIBLE);
+            View k = findViewById(R.id.btn_register);
+            k.setVisibility(View.VISIBLE);
+        }
         setupUiEvents();
     }
 
@@ -27,15 +43,23 @@ public class MainActivity extends ActionBarActivity {
         firstButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.this.onClickStartLogin((Button) v);
+                MainActivity.this.onClickStart((Button) v);
             }
         });
 
-        Button secondButton = (Button) findViewById(R.id.register);
+        Button secondButton = (Button) findViewById(R.id.btn_register);
         secondButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MainActivity.this.onClickStartRegister((Button) v);
+            }
+        });
+
+        Button thirdButton = (Button) findViewById(R.id.logout);
+        thirdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.onClickLogout((Button) v);
             }
         });
     }
@@ -45,8 +69,26 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    private void onClickStartLogin(Button b) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+    private void onClickStart(Button b) {
+        SharedPreferences prefs = getSharedPreferences("MyPrefsFile", 0);
+        String restoredText = prefs.getString("token", null);
+        if (restoredText != null) {
+            Intent intent = new Intent(this, FreeSlappingActivity.class);
+            startActivity(intent);
+
+        }
+        else {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    private void onClickLogout(Button b) {
+        SharedPreferences prefs = getSharedPreferences("MyPrefsFile", 0);
+        prefs.edit().remove("token").commit();
+        View v = findViewById(R.id.logout);
+        v.setVisibility(View.INVISIBLE);
+        View k = findViewById(R.id.btn_register);
+        k.setVisibility(View.VISIBLE);
     }
 }

@@ -3,6 +3,7 @@ package com.thebutts.slappybutt;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -58,9 +59,13 @@ public class LoginActivity extends ActionBarActivity {
 
             new PostDataTask().execute(new String[]{username, password});
 
+            View v = findViewById(R.id.btn_register);
+            v.setVisibility(View.INVISIBLE);
+            View k = findViewById(R.id.logout);
+            k.setVisibility(View.VISIBLE);
+
             Intent intent = new Intent(this, FreeSlappingActivity.class);
             startActivity(intent);
-
 
         }
         else if (username.length() < 1 && password.length() < 1) {
@@ -98,13 +103,15 @@ public class LoginActivity extends ActionBarActivity {
                 httpPost.setEntity(entity);
                 HttpResponse response = httpClient.execute(httpPost);
                 String responseStr = EntityUtils.toString(response.getEntity());
-                Log.d(getClass().getSimpleName(), responseStr);
-                //ResponseHandler<String> handler = new BasicResponseHandler();
-                //String result =httpClient.execute(httpPost,handler);
+
+                SharedPreferences settings = getSharedPreferences("MyPrefsFile", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("token", responseStr);
+                editor.commit();
+                //Log.d(getClass().getSimpleName(), responseStr);
 
                 final int statusCode = response.getStatusLine().getStatusCode();
                 Log.d(getClass().getSimpleName(), "Status code " + statusCode + " for URL " + httpPost.getURI());
-
 
             }
             catch (HttpResponseException e) {

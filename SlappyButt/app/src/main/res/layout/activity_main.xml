@@ -29,7 +29,7 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:id="@+id/register"
+        android:id="@+id/btn_register"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="81dp" />
@@ -39,9 +39,9 @@
         android:layout_height="wrap_content"
         android:text="Paly"
         android:id="@+id/btn_start_free_slapping"
-        android:layout_below="@+id/register"
-        android:layout_alignLeft="@+id/register"
-        android:layout_alignStart="@+id/register" />
+        android:layout_below="@+id/btn_register"
+        android:layout_alignLeft="@+id/btn_register"
+        android:layout_alignStart="@+id/btn_register" />
 
     <Button
         android:layout_width="150dp"
@@ -60,5 +60,16 @@
         android:layout_below="@+id/highScoreButton"
         android:layout_alignLeft="@+id/highScoreButton"
         android:layout_alignStart="@+id/highScoreButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:id="@+id/logout"
+        android:layout_below="@+id/button4"
+        android:layout_alignLeft="@+id/button4"
+        android:layout_alignStart="@+id/button4"
+        android:layout_alignRight="@+id/button4"
+        android:layout_alignEnd="@+id/button4" />
 
 </RelativeLayout>
