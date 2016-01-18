@@ -62,6 +62,15 @@ public class MainActivity extends ActionBarActivity {
                 MainActivity.this.onClickLogout((Button) v);
             }
         });
+
+        Button thButton = (Button) findViewById(R.id.highScoreButton);
+        thButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.onClickScores((Button) v);
+            }
+        });
+
     }
 
     private void onClickStartRegister(Button b) {
@@ -90,5 +99,10 @@ public class MainActivity extends ActionBarActivity {
         v.setVisibility(View.INVISIBLE);
         View k = findViewById(R.id.btn_register);
         k.setVisibility(View.VISIBLE);
+    }
+
+    private void onClickScores(Button b) {
+        Intent intent = new Intent(this, ScoresActivity.class);
+        startActivity(intent);
     }
 }
