@@ -2,7 +2,6 @@ package com.thebutts.slappybutt;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.support.v4.app.FragmentActivity;
@@ -10,13 +9,18 @@ import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.thebutts.slappybutt.Fragments.FreeSlappingFragment;
 import com.thebutts.slappybutt.Fragments.GameOverFragment;
 import com.thebutts.slappybutt.Fragments.GameSlappingFragment;
+import com.thebutts.slappybutt.Fragments.MainMenuFragment;
 
-public class FreeSlappingActivityWithFragment extends FragmentActivity {
+public class ActivityMainWithFragments extends FragmentActivity {
 
     GameSlappingFragment mGameFragment;
     GameOverFragment mGameOverFragment;
+    MainMenuFragment mMainMenuFragment;
+    FreeSlappingFragment mFreeSlappingFragment;
+
     android.support.v4.app.FragmentTransaction mFt;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -33,17 +37,7 @@ public class FreeSlappingActivityWithFragment extends FragmentActivity {
 
         setContentView(R.layout.activity_free_slapping_activity_with_fragment);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                FreeSlappingActivityWithFragment.this.mFt = getSupportFragmentManager().beginTransaction();
-
-                FreeSlappingActivityWithFragment.this.getNewGameFragment();
-
-                FreeSlappingActivityWithFragment.this.mFt.add(R.id.free_slapping_fragment_container, mGameFragment).commit();
-            }
-        }).start();
-
+        this.loadMainMenu();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -66,7 +60,7 @@ public class FreeSlappingActivityWithFragment extends FragmentActivity {
         client.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
-                "FreeSlappingActivityWithFragment Page", // TODO: Define a title for the content shown.
+                "ActivityMainWithFragments Page", // TODO: Define a title for the content shown.
                 // TODO: If you have web page content that matches this app activity's content,
                 // make sure this auto-generated web page URL is correct.
                 // Otherwise, set the URL to null.
@@ -87,7 +81,7 @@ public class FreeSlappingActivityWithFragment extends FragmentActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
-                "FreeSlappingActivityWithFragment Page", // TODO: Define a title for the content shown.
+                "ActivityMainWithFragments Page", // TODO: Define a title for the content shown.
                 // TODO: If you have web page content that matches this app activity's content,
                 // make sure this auto-generated web page URL is correct.
                 // Otherwise, set the URL to null.
@@ -108,40 +102,66 @@ public class FreeSlappingActivityWithFragment extends FragmentActivity {
         // mFt.remove(mGameFragment);
     }
 
-    public void onGameOver(Integer slapsCount){
+    public void loadGameOver(Integer slapsCount) {
 
         final Integer slaps = slapsCount;
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                FreeSlappingActivityWithFragment.this.mFt.remove(FreeSlappingActivityWithFragment.this.mGameFragment);
-                FreeSlappingActivityWithFragment.this.mFt = getSupportFragmentManager().beginTransaction();
-                FreeSlappingActivityWithFragment.this.mGameOverFragment = GameOverFragment.newInstance(slaps);
-                FreeSlappingActivityWithFragment.this.mFt.replace(R.id.free_slapping_fragment_container, mGameOverFragment).commit();
+                ActivityMainWithFragments.this.mFt = getSupportFragmentManager().beginTransaction();
+                ActivityMainWithFragments.this.mGameOverFragment = GameOverFragment.newInstance(slaps);
+                ActivityMainWithFragments.this.mFt.replace(R.id.free_slapping_fragment_container, mGameOverFragment).commit();
             }
         }).start();
     }
 
-    public void onNewGame(){
+    public void loadNewGame() {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-
-                FreeSlappingActivityWithFragment.this.mFt.remove(FreeSlappingActivityWithFragment.this.mGameOverFragment);
-                FreeSlappingActivityWithFragment.this.mFt = getSupportFragmentManager().beginTransaction();
-                FreeSlappingActivityWithFragment.this.getNewGameFragment();
-                FreeSlappingActivityWithFragment.this.mFt.replace(R.id.free_slapping_fragment_container,  FreeSlappingActivityWithFragment.this.mGameFragment).commit();
+                ActivityMainWithFragments.this.mFt = getSupportFragmentManager().beginTransaction();
+                ActivityMainWithFragments.this.getNewGameFragment();
+                ActivityMainWithFragments.this.mFt.replace(R.id.free_slapping_fragment_container, ActivityMainWithFragments.this.mGameFragment).commit();
             }
         }).start();
     }
 
-    private void getNewGameFragment(){
+    public void loadMainMenu() {
 
-        if (FreeSlappingActivityWithFragment.this.mGameFragment == null) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ActivityMainWithFragments.this.mFt = getSupportFragmentManager().beginTransaction();
 
-            FreeSlappingActivityWithFragment.this.mGameFragment = GameSlappingFragment.newInstance(
+                ActivityMainWithFragments.this.getMainMenuFragment();
+
+                ActivityMainWithFragments.this.mFt.replace(R.id.free_slapping_fragment_container, ActivityMainWithFragments.this.mMainMenuFragment).commit();
+            }
+        }).start();
+    }
+
+    public void loadFreeSlapping() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ActivityMainWithFragments.this.mFt = getSupportFragmentManager().beginTransaction();
+
+                ActivityMainWithFragments.this.getFreeSlappingFragment();
+
+                ActivityMainWithFragments.this.mFt.replace(R.id.free_slapping_fragment_container, ActivityMainWithFragments.this.mFreeSlappingFragment).commit();
+            }
+        }).start();
+    }
+
+
+    private void getNewGameFragment() {
+
+        if (ActivityMainWithFragments.this.mGameFragment == null) {
+
+            ActivityMainWithFragments.this.mGameFragment = GameSlappingFragment.newInstance(
                     R.drawable.anim_first_right_butt_slap,
                     R.drawable.anim_first_right_flint_left,
                     R.drawable.anim_first_right_flint_right,
@@ -162,6 +182,42 @@ public class FreeSlappingActivityWithFragment extends FragmentActivity {
                     R.drawable.first_left_initial,
                     R.drawable.first_torso_initial,
                     R.array.first_torso_images);
+        }
+    }
+
+    private void getFreeSlappingFragment() {
+
+        if (ActivityMainWithFragments.this.mFreeSlappingFragment == null) {
+
+            ActivityMainWithFragments.this.mFreeSlappingFragment = FreeSlappingFragment.newInstance(
+                    R.drawable.anim_first_right_butt_slap,
+                    R.drawable.anim_first_right_flint_left,
+                    R.drawable.anim_first_right_flint_right,
+                    R.drawable.anim_first_right_flint_up,
+                    R.drawable.anim_first_right_flint_down,
+                    R.drawable.anim_first_right_pinch_out,
+                    R.drawable.anim_first_right_pinch_in,
+                    R.drawable.anim_first_right_shake,
+                    R.drawable.first_right_initial,
+                    R.drawable.anim_first_left_butt_slap,
+                    R.drawable.anim_first_left_flint_left,
+                    R.drawable.anim_first_left_flint_right,
+                    R.drawable.anim_first_left_flint_up,
+                    R.drawable.anim_first_left_flint_down,
+                    R.drawable.anim_first_left_pinch_out,
+                    R.drawable.anim_first_left_pinch_in,
+                    R.drawable.anim_first_left_shake,
+                    R.drawable.first_left_initial,
+                    R.drawable.first_torso_initial,
+                    R.array.first_torso_images);
+        }
+    }
+
+    private void getMainMenuFragment() {
+
+        if (ActivityMainWithFragments.this.mMainMenuFragment == null) {
+
+            ActivityMainWithFragments.this.mMainMenuFragment = MainMenuFragment.newInstance();
         }
     }
 }

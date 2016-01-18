@@ -2,11 +2,8 @@ package com.thebutts.slappybutt.Fragments;
 
 import android.app.Activity;
 import android.content.res.TypedArray;
-import android.gesture.Gesture;
-import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
-import android.gesture.Prediction;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
@@ -33,17 +30,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.thebutts.slappybutt.Common.Constants;
-import com.thebutts.slappybutt.FreeSlappingActivityWithFragment;
+import com.thebutts.slappybutt.ActivityMainWithFragments;
 import com.thebutts.slappybutt.Helpers.SwipeGestureDetector;
 import com.thebutts.slappybutt.R;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -775,7 +770,7 @@ public class GameSlappingFragment extends Fragment {
             public void onFinish() {
 
                 Log.d("ONTIMERFINISH", GameSlappingFragment.this.mScore.toString());
-                ((FreeSlappingActivityWithFragment) getActivity()).onGameOver(GameSlappingFragment.this.mScore);
+                ((ActivityMainWithFragments) getActivity()).loadGameOver(GameSlappingFragment.this.mScore);
 
                 GameSlappingFragment.this.mScore = 0;
                 //  GameSlappingFragment.this.mTimer = null;

@@ -11,14 +11,16 @@
         android:layout_height="0dp"
         android:layout_weight="1.5"
         android:orientation="horizontal"
-        android:weightSum="20">
+        android:weightSum="20"
+        android:background="#ab6800fa">
 
         <Button
             android:id="@+id/button"
-            style="?android:attr/buttonStyleSmall"
+            style="@style/button_common_custom_style"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="◀" />
+            android:text="◀"
+            />
 
         <Space
             android:layout_width="0dp"
@@ -26,32 +28,32 @@
             android:layout_weight="2" />
 
         <TextView
-            android:id="@+id/username_container"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Username"
+            android:id="@+id/slaps_text_container"
+            style="@style/ScoreBarTextStyle"
+            android:text="Slaps:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Space
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="4.05" />
+            android:layout_weight="2" />
 
         <TextView
             android:id="@+id/tv_score_container"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            style="@style/ScoreBarTextStyle"
             android:text="0"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#ffffff" />
+            android:textColor="#90ffa5"
+            android:textSize="20sp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            style="@style/ScoreBarTextStyle"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:gravity="center"
             android:text="Time to slap:"
             android:id="@+id/tv_stage_text" />
 
@@ -61,12 +63,12 @@
             android:layout_weight="4.05" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            style="@style/ScoreBarTextStyle"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:gravity="center"
             android:text="1"
-            android:id="@+id/tv_time_left_value" />
+            android:id="@+id/tv_time_left_value"
+            android:textColor="#ef8d8d"
+            android:textSize="20sp" />
     </LinearLayout>
 
 </LinearLayout>
