@@ -7,4 +7,23 @@
         <item>@drawable/background_03</item>
     </string-array>
 
+    <string-array name="first_torso_images">
+        <item>@drawable/first_torso_initial</item>
+        <item>@drawable/first_torso_tattoo_01</item>
+        <item>@drawable/first_torso_tattoo_02</item>
+        <item>@drawable/first_torso_tattoo_03</item>
+    </string-array>
+
+    <string-array name="first_slap_sounds">
+        <item>@raw/slap_leftt</item>
+        <item>@raw/slap_right</item>
+        <item>@raw/slap_flint_right</item>
+        <item>@raw/slap_flint_left</item>
+        <item>@raw/slap_flint_up</item>
+        <item>@raw/slap_flint_down</item>
+        <item>@raw/slap_pinch_out</item>
+        <item>@raw/slap_pinch_in</item>
+        <item>@raw/shake</item>
+    </string-array>
+
 </resources>

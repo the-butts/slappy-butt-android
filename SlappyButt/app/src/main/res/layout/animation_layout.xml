@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ivBodyTop"
-        android:src="@drawable/first_torso_initial"
+        android:src="@drawable/torso_invisible"
         android:padding="0dp"
         android:layout_above="@+id/ivLeftButt"
         android:layout_alignLeft="@+id/ivLeftButt"

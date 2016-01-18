@@ -32,6 +32,8 @@ public class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListene
         return false;
     }
 
+
+
     public int getSlope(float x1, float y1, float x2, float y2) {
         Double angle = Math.toDegrees(Math.atan2(y1 - y2, x2 - x1));
         if (angle > 45 && angle <= 135)

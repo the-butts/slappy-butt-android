@@ -1,0 +1,40 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.thebutts.slappybutt.Fragments.FreeSlappingFragment">
+
+
+    <FrameLayout
+        android:id="@+id/freeSlapFragmentBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <include
+            layout="@layout/animation_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/gesture_listener_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#7cffffff"
+        android:alpha="1"
+        android:visibility="gone"
+        android:animateLayoutChanges="true">
+
+        <include
+            layout="@layout/gesture_listener"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp" />
+
+    </FrameLayout>
+
+
+</FrameLayout>

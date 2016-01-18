@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -23,61 +26,71 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.thebutts.slappybutt.Helpers.*;
 
 import java.util.Random;
 
 public class FreeSlappingActivity extends Activity implements SensorEventListener {
 
-    AnimationDrawable rightButtSlappAnimation;
-    AnimationDrawable leftButtSlappAnimation;
+    private Drawable mRightInitial;
+    private Drawable mLeftInitial;
+    private Drawable mTorso;
 
-    AnimationDrawable rightButtFlintLeft;
-    AnimationDrawable leftButtSFlintLeft;
+    private AnimationDrawable mRightButtSlapAnimation;
+    private AnimationDrawable mLeftButtSlapAnimation;
 
-    AnimationDrawable rightButtFlintRight;
-    AnimationDrawable leftButtFlintRight;
+    private AnimationDrawable mRightButtFlintLeftAnimation;
+    private AnimationDrawable mLeftButtFlintLeftAnimation;
 
-    AnimationDrawable rightButtFlintUp;
-    AnimationDrawable leftButtSFlintUp;
+    private AnimationDrawable mRightButtFlintRightAnimation;
+    private AnimationDrawable mLeftButtFlintRightAnimation;
 
-    AnimationDrawable rightButtFlintDown;
-    AnimationDrawable leftButtFlintDown;
+    private AnimationDrawable mRightButtFlintUpAnimation;
+    private AnimationDrawable mLeftButtFlintUpAnimation;
 
-    AnimationDrawable rightButtPinchIn;
-    AnimationDrawable leftButtPinchIn;
+    private AnimationDrawable mRightButtFlintDownAnimation;
+    private AnimationDrawable mLeftButtFlintDownAnimation;
 
-    AnimationDrawable rightButtPinchOut;
-    AnimationDrawable leftButtPinchOut;
+    private AnimationDrawable mRightButtPinchInAnimation;
+    private AnimationDrawable mLeftButtPinchInAnimation;
 
-    AnimationDrawable rightShake;
-    AnimationDrawable leftShake;
+    private AnimationDrawable mRightButtPinchOutAnimation;
+    private AnimationDrawable mLeftButtPinchOutAnimation;
 
-    Animation fadeIn;
-    Animation fadeOut;
+    private AnimationDrawable mRightButtShakeAnimation;
+    private AnimationDrawable mLeftButtShakeAnimation;
 
+    private Animation mBackgroundFadeInAnimation;
+    private Animation mBackgroundFadeOutAnimation;
 
-    ImageView mBodyTop;
-    ImageView mLevtButtContainer;
-    ImageView mRightButtContainer;
+    private ImageView mTorsoContainer;
+    private ImageView mLeftButtContainer;
+    private ImageView mRightButtContainer;
 
-    FrameLayout mSlappinngFrame;
-    FrameLayout mActivityLayout;
+    private FrameLayout mSlappingFrame;
+    private FrameLayout mActivityLayout;
 
-    Integer mScreenWidth;
+    private Integer mScreenWidth;
 
-    Vibrator vibrator;
+    private Vibrator mVibrator;
 
-    TypedArray mBackgroundImages;
+    private TypedArray mBackgroundImages;
 
-    private SensorManager senSensorManager;
-    private Sensor senAccelerometer;
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
 
-    private long lastUpdate = 0;
+    private long mLastUpdate = 0;
     private float last_x, last_y, last_z;
-    private static final int SHAKE_THRESHOLD = 800;
+    private static final int SHAKE_THRESHOLD = 600;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,34 +105,66 @@ public class FreeSlappingActivity extends Activity implements SensorEventListene
         this.SetupAnimations();
         this.setupUiEvents();
         this.SetupSensors();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     void SetupSensors() {
-        senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     void SetupAnimations() {
-        mRightButtContainer = (ImageView) findViewById(R.id.ivRightButt);
-        mRightButtContainer.setBackgroundResource(R.drawable.first_right_initial);
-        mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        mLevtButtContainer = (ImageView) findViewById(R.id.ivLeftButt);
-        mLevtButtContainer.setBackgroundResource(R.drawable.first_left_initial);
-        mLevtButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        this.mRightInitial = ResourcesCompat.getDrawable(getResources(), R.drawable.first_right_initial, null);
+        this.mLeftInitial = ResourcesCompat.getDrawable(getResources(), R.drawable.first_left_initial, null);
+        this.mTorso = ResourcesCompat.getDrawable(getResources(), R.drawable.first_torso_initial, null);
 
-        mBodyTop = (ImageView) findViewById(R.id.ivBodyTop);
+        this.mRightButtContainer = (ImageView) findViewById(R.id.ivRightButt);
+        this.mRightButtContainer.setBackground(mRightInitial);
+        this.mRightButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        mSlappinngFrame = (FrameLayout) findViewById(R.id.slappingFrame);
-        mActivityLayout = (FrameLayout) findViewById(R.id.freeSlapActivityLayout);
+        this.mLeftButtContainer = (ImageView) findViewById(R.id.ivLeftButt);
+        this.mLeftButtContainer.setBackground(mLeftInitial);
+        this.mLeftButtContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        mBackgroundImages = getResources().obtainTypedArray(R.array.background_images);
+        this.mTorsoContainer = (ImageView) findViewById(R.id.ivBodyTop);
+        this.mTorsoContainer.setBackground(mTorso);
 
-        fadeIn = AnimationUtils.loadAnimation(FreeSlappingActivity.this, R.anim.fade_in);
-        fadeOut = AnimationUtils.loadAnimation(FreeSlappingActivity.this, R.anim.fade_out);
+        this.mSlappingFrame = (FrameLayout) findViewById(R.id.slappingFrame);
+        this.mActivityLayout = (FrameLayout) findViewById(R.id.freeSlapActivityLayout);
+
+        this.mBackgroundImages = getResources().obtainTypedArray(R.array.background_images);
+
+        this.mBackgroundFadeInAnimation = AnimationUtils.loadAnimation(FreeSlappingActivity.this, R.anim.fade_in);
+        this.mBackgroundFadeOutAnimation = AnimationUtils.loadAnimation(FreeSlappingActivity.this, R.anim.fade_out);
+
+        //Resources res = this.context.getResources();
+
+
+
+       this.mRightButtSlapAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_right_butt_slap, null);
+       this.mLeftButtSlapAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_left_butt_slap, null);
+
+       this.mRightButtFlintLeftAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_right_flint_left, null);
+       this.mLeftButtFlintLeftAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_left_flint_left, null);
+       this.mRightButtFlintRightAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_right_flint_right, null);
+       this.mLeftButtFlintRightAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_left_flint_right, null);
+       this.mRightButtFlintUpAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_right_flint_up, null);
+       this.mLeftButtFlintUpAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_left_flint_up, null);
+       this.mRightButtFlintDownAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_right_flint_down, null);
+       this.mLeftButtFlintDownAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_left_flint_down, null);
+       this.mRightButtPinchInAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_right_pinch_in, null);
+       this.mLeftButtPinchInAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_left_pinch_in, null);
+       this.mRightButtPinchOutAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_right_pinch_out, null);
+       this.mLeftButtPinchOutAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_left_pinch_out, null);
+       this.mRightButtShakeAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_right_shake, null);
+       this.mLeftButtShakeAnimation = (AnimationDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.anim_first_left_shake, null);
+
 
         setRandomBackGround();
     }
@@ -131,14 +176,14 @@ public class FreeSlappingActivity extends Activity implements SensorEventListene
         mScreenWidth = metrics.widthPixels;
     }
 
-    void setRandomBackGround(){
+    void setRandomBackGround() {
         Random rand = new Random();
 
         final int index = rand.nextInt(mBackgroundImages.length());
 
-        mActivityLayout.startAnimation(fadeOut);
+        mActivityLayout.startAnimation(mBackgroundFadeOutAnimation);
         mActivityLayout.setBackgroundResource(mBackgroundImages.getResourceId(index, -1));
-        mActivityLayout.startAnimation(fadeIn);
+        mActivityLayout.startAnimation(mBackgroundFadeInAnimation);
     }
 
     void setupUiEvents() {
@@ -152,7 +197,7 @@ public class FreeSlappingActivity extends Activity implements SensorEventListene
             }
         });
 
-        mBodyTop.setOnTouchListener(new View.OnTouchListener() {
+        mTorsoContainer.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -256,212 +301,212 @@ public class FreeSlappingActivity extends Activity implements SensorEventListene
             }
         };
 
-        mSlappinngFrame.setOnTouchListener(scaleGestureListener);
+        mSlappingFrame.setOnTouchListener(scaleGestureListener);
     }
 
     private void onClickPinchOut() {
-        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_pinch_out);
-        rightButtPinchOut = (AnimationDrawable) mRightButtContainer.getBackground();
+        mRightButtContainer.setBackground(mRightButtPinchOutAnimation);
+        //mRightButtPinchOutAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
 
-        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_pinch_out);
-        leftButtPinchOut = (AnimationDrawable) mLevtButtContainer.getBackground();
+        mLeftButtContainer.setBackground(mLeftButtPinchOutAnimation);
+        // mLeftButtPinchOutAnimation = (AnimationDrawable) mLeftButtContainer.getBackground();
 
         this.stopAllActiveAnimations("onHuc");
 
-        rightButtPinchOut.start();
-        leftButtPinchOut.start();
+        mRightButtPinchOutAnimation.start();
+        mLeftButtPinchOutAnimation.start();
     }
 
     private void onClickPinchIn() {
-        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_pinch_in);
-        rightButtPinchIn = (AnimationDrawable) mRightButtContainer.getBackground();
+        mRightButtContainer.setBackground(mRightButtPinchInAnimation);
+        //mRightButtPinchInAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
 
-        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_pinch_in);
-        leftButtPinchIn = (AnimationDrawable) mLevtButtContainer.getBackground();
+        mLeftButtContainer.setBackground(mLeftButtPinchInAnimation);
+        // mLeftButtPinchInAnimation = (AnimationDrawable) mLeftButtContainer.getBackground();
 
         this.stopAllActiveAnimations("onHuc");
 
-        rightButtPinchIn.start();
-        leftButtPinchIn.start();
+        mRightButtPinchInAnimation.start();
+        mLeftButtPinchInAnimation.start();
     }
 
     private void onClickFlintUp() {
-        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_up);
-        rightButtFlintUp = (AnimationDrawable) mRightButtContainer.getBackground();
+        mRightButtContainer.setBackground(mRightButtFlintUpAnimation);
+        // mRightButtFlintUpAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
 
-        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_up);
-        leftButtSFlintUp = (AnimationDrawable) mLevtButtContainer.getBackground();
+        mLeftButtContainer.setBackground(mLeftButtFlintUpAnimation);
+        // mLeftButtFlintUpAnimation = (AnimationDrawable) mLeftButtContainer.getBackground();
 
         this.stopAllActiveAnimations("onHuc");
 
-        rightButtFlintUp.start();
-        leftButtSFlintUp.start();
+        mRightButtFlintUpAnimation.start();
+        mLeftButtFlintUpAnimation.start();
     }
 
     private void onClickFlintDown() {
-        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_down);
-        rightButtFlintDown = (AnimationDrawable) mRightButtContainer.getBackground();
+        mRightButtContainer.setBackground(mRightButtFlintDownAnimation);
+        // mRightButtFlintDownAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
 
-        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_down);
-        leftButtFlintDown = (AnimationDrawable) mLevtButtContainer.getBackground();
+        mLeftButtContainer.setBackground(mLeftButtFlintDownAnimation);
+        // mLeftButtFlintDownAnimation = (AnimationDrawable) mLeftButtContainer.getBackground();
 
         this.stopAllActiveAnimations("onHuc");
 
-        rightButtFlintDown.start();
-        leftButtFlintDown.start();
+        mRightButtFlintDownAnimation.start();
+        mLeftButtFlintDownAnimation.start();
     }
 
     private void onClickFlintRight() {
-        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_right);
-        rightButtFlintRight = (AnimationDrawable) mRightButtContainer.getBackground();
+        mRightButtContainer.setBackground(mRightButtFlintRightAnimation);
+        //  mRightButtFlintRightAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
 
-        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_right);
-        leftButtFlintRight = (AnimationDrawable) mLevtButtContainer.getBackground();
+        mLeftButtContainer.setBackground(mLeftButtFlintRightAnimation);
+        // mLeftButtFlintRightAnimation = (AnimationDrawable) mLeftButtContainer.getBackground();
 
         this.stopAllActiveAnimations("onHuc");
 
-        rightButtFlintRight.start();
-        leftButtFlintRight.start();
+        mRightButtFlintRightAnimation.start();
+        mLeftButtFlintRightAnimation.start();
     }
 
     private void onClickFlintLeft() {
-        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_flint_left);
-        rightButtFlintLeft = (AnimationDrawable) mRightButtContainer.getBackground();
+        mRightButtContainer.setBackground(mRightButtFlintLeftAnimation);
+        // mRightButtFlintLeftAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
 
-        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_flint_left);
-        leftButtSFlintLeft = (AnimationDrawable) mLevtButtContainer.getBackground();
+        mLeftButtContainer.setBackground(mLeftButtFlintLeftAnimation);
+        // mLeftButtFlintLeftAnimation = (AnimationDrawable) mLeftButtContainer.getBackground();
 
         this.stopAllActiveAnimations("onHuc");
 
-        rightButtFlintLeft.start();
-        leftButtSFlintLeft.start();
+        mRightButtFlintLeftAnimation.start();
+        mLeftButtFlintLeftAnimation.start();
     }
 
     private void onClickShake() {
-        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_shake);
-        rightShake = (AnimationDrawable) mRightButtContainer.getBackground();
+        mRightButtContainer.setBackground(mRightButtShakeAnimation);
+        // mRightButtShakeAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
 
-        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_shake);
-        leftShake = (AnimationDrawable) mLevtButtContainer.getBackground();
+        mLeftButtContainer.setBackground(mLeftButtShakeAnimation);
+        // mLeftButtShakeAnimation = (AnimationDrawable) mLeftButtContainer.getBackground();
 
         this.stopAllActiveAnimations("onHuc");
 
-        rightShake.start();
-        leftShake.start();
+        mRightButtShakeAnimation.start();
+        mLeftButtShakeAnimation.start();
 
         long[] pattern = new long[]{75, 225, 75, 75, 75, 75, 75, 225, 75, 225, 75, 225, 75, 75, 75, 225, 75, 225, 75, 75, 75, 75, 75, 225, 75, 225, 75, 225, 75, 75, 75, 225, 75, 225, 75, 75, 75, 75, 75, 225, 75, 225, 150, 150, 75, 75, 75, 225, 75, 375, 75, 75, 75, 75, 75, 225, 75, 225, 75, 225};
 
-        vibrator.vibrate(pattern, -1);
+        mVibrator.vibrate(pattern, -1);
     }
 
     private void onClickBtnRightButt() {
-        mRightButtContainer.setBackgroundResource(R.drawable.anim_first_right_butt_slap);
-        rightButtSlappAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
+        mRightButtContainer.setBackground(mRightButtSlapAnimation);
+        //  mRightButtSlapAnimation = (AnimationDrawable) mRightButtContainer.getBackground();
 
         this.stopAllActiveAnimations("onRight");
 
-//        if (rightButtSlappAnimation.isRunning()) {
+//        if (mRightButtSlapAnimation.isRunning()) {
 //
-//            rightButtSlappAnimation.stop();
-//            vibrator.cancel();
+//            mRightButtSlapAnimation.stop();
+//            mVibrator.cancel();
 //        }
 //
-//        if (leftButtSlappAnimation == null || leftButtSlappAnimation.isRunning()) {
-//            mLevtButtContainer.setBackgroundResource(R.drawable.first_left_initial);
+//        if (mLeftButtSlapAnimation == null || mLeftButtSlapAnimation.isRunning()) {
+//            mLeftButtContainer.setBackgroundResource(R.drawable.first_left_initial);
 //        }
 
-        rightButtSlappAnimation.start();
+        mRightButtSlapAnimation.start();
     }
 
     private void onClickBtnLeftButt() {
-        mLevtButtContainer.setBackgroundResource(R.drawable.anim_first_left_butt_slap);
-        leftButtSlappAnimation = (AnimationDrawable) mLevtButtContainer.getBackground();
+        mLeftButtContainer.setBackground(mLeftButtSlapAnimation);
+        // mLeftButtSlapAnimation = (AnimationDrawable) mLeftButtContainer.getBackground();
 
         this.stopAllActiveAnimations("onLeft");
 
-//        if (leftButtSlappAnimation.isRunning()) {
-//            leftButtSlappAnimation.stop();
-//            vibrator.cancel();
+//        if (mLeftButtSlapAnimation.isRunning()) {
+//            mLeftButtSlapAnimation.stop();
+//            mVibrator.cancel();
 //        }
 //
-//        if (rightButtSlappAnimation == null || !rightButtSlappAnimation.isRunning()) {
+//        if (mRightButtSlapAnimation == null || !mRightButtSlapAnimation.isRunning()) {
 //            mRightButtContainer.setBackgroundResource(R.drawable.first_right_initial);
 //        }
 
-        leftButtSlappAnimation.start();
+        mLeftButtSlapAnimation.start();
     }
 
     private void stopAllActiveAnimations(String clickedOn) {
 
-        if (rightButtFlintLeft != null && (rightButtFlintLeft.isRunning() || leftButtSFlintLeft.isRunning())) {
+        if (mRightButtFlintLeftAnimation != null && (mRightButtFlintLeftAnimation.isRunning() || mLeftButtFlintLeftAnimation.isRunning())) {
             //  setInitialButts();
-            rightButtFlintLeft.stop();
-            leftButtSFlintLeft.stop();
+            mRightButtFlintLeftAnimation.stop();
+            mLeftButtFlintLeftAnimation.stop();
         }
 
-        if (rightButtFlintDown != null && (rightButtFlintDown.isRunning() || leftButtFlintDown.isRunning())) {
+        if (mRightButtFlintDownAnimation != null && (mRightButtFlintDownAnimation.isRunning() || mLeftButtFlintDownAnimation.isRunning())) {
             // setInitialButts();
-            rightButtFlintDown.stop();
-            leftButtFlintDown.stop();
+            mRightButtFlintDownAnimation.stop();
+            mLeftButtFlintDownAnimation.stop();
         }
 
-        if (rightButtFlintRight != null && (rightButtFlintRight.isRunning() || leftButtFlintRight.isRunning())) {
+        if (mRightButtFlintRightAnimation != null && (mRightButtFlintRightAnimation.isRunning() || mLeftButtFlintRightAnimation.isRunning())) {
             //  setInitialButts();
-            rightButtFlintRight.stop();
-            leftButtFlintRight.stop();
+            mRightButtFlintRightAnimation.stop();
+            mLeftButtFlintRightAnimation.stop();
         }
 
-        if (rightButtFlintUp != null && (rightButtFlintUp.isRunning() || leftButtSFlintUp.isRunning())) {
+        if (mRightButtFlintUpAnimation != null && (mRightButtFlintUpAnimation.isRunning() || mLeftButtFlintUpAnimation.isRunning())) {
             // setInitialButts();
-            rightButtFlintUp.stop();
-            leftButtSFlintUp.stop();
+            mRightButtFlintUpAnimation.stop();
+            mLeftButtFlintUpAnimation.stop();
         }
 
-        if (rightButtPinchIn != null && (rightButtPinchIn.isRunning() || leftButtPinchIn.isRunning())) {
+        if (mRightButtPinchInAnimation != null && (mRightButtPinchInAnimation.isRunning() || mLeftButtPinchInAnimation.isRunning())) {
             //setInitialButts();
-            rightButtPinchIn.stop();
-            leftButtPinchIn.stop();
+            mRightButtPinchInAnimation.stop();
+            mLeftButtPinchInAnimation.stop();
         }
 
-        if (rightButtPinchOut != null && (rightButtPinchOut.isRunning() || leftButtPinchOut.isRunning())) {
+        if (mRightButtPinchOutAnimation != null && (mRightButtPinchOutAnimation.isRunning() || mLeftButtPinchOutAnimation.isRunning())) {
             // setInitialButts();
-            rightButtPinchOut.stop();
-            leftButtPinchOut.stop();
+            mRightButtPinchOutAnimation.stop();
+            mLeftButtPinchOutAnimation.stop();
         }
 
-        if (rightShake != null && (rightShake.isRunning() || leftShake.isRunning())) {
+        if (mRightButtShakeAnimation != null && (mRightButtShakeAnimation.isRunning() || mLeftButtShakeAnimation.isRunning())) {
             //setInitialButts();
-            rightShake.stop();
-            leftShake.stop();
-            vibrator.cancel();
+            mRightButtShakeAnimation.stop();
+            mLeftButtShakeAnimation.stop();
+            mVibrator.cancel();
         }
 
-        if (leftButtSlappAnimation != null && leftButtSlappAnimation.isRunning()) {
+        if (mLeftButtSlapAnimation != null && mLeftButtSlapAnimation.isRunning()) {
             if (!clickedOn.equals("onRight")) {
-                leftButtSlappAnimation.stop();
+                mLeftButtSlapAnimation.stop();
             }
         }
 
-        if (rightButtSlappAnimation != null && rightButtSlappAnimation.isRunning()) {
+        if (mRightButtSlapAnimation != null && mRightButtSlapAnimation.isRunning()) {
 
             if (!clickedOn.equals("onLeft")) {
-                rightButtSlappAnimation.stop();
+                mRightButtSlapAnimation.stop();
             }
         }
 
-        if (clickedOn.equals("onRight") && (leftButtSlappAnimation == null || !leftButtSlappAnimation.isRunning())) {
-            mLevtButtContainer.setBackgroundResource(R.drawable.first_left_initial);
+        if (clickedOn.equals("onRight") && (mLeftButtSlapAnimation == null || !mLeftButtSlapAnimation.isRunning())) {
+            mLeftButtContainer.setBackground(mLeftInitial);
         }
 
-        if (clickedOn.equals("onLeft") && (rightButtSlappAnimation == null || !rightButtSlappAnimation.isRunning())) {
-            mRightButtContainer.setBackgroundResource(R.drawable.first_right_initial);
+        if (clickedOn.equals("onLeft") && (mRightButtSlapAnimation == null || !mRightButtSlapAnimation.isRunning())) {
+            mRightButtContainer.setBackground(mRightInitial);
         }
 
     }
 
     private void setInitialButts() {
-        mRightButtContainer.setBackgroundResource(R.drawable.first_right_initial);
-        mLevtButtContainer.setBackgroundResource(R.drawable.first_left_initial);
+        mRightButtContainer.setBackground(mRightInitial);
+        mLeftButtContainer.setBackground(mLeftInitial);
     }
 
     @Override
@@ -475,9 +520,9 @@ public class FreeSlappingActivity extends Activity implements SensorEventListene
 
             long curTime = System.currentTimeMillis();
 
-            if ((curTime - lastUpdate) > 300) {
-                long diffTime = (curTime - lastUpdate);
-                lastUpdate = curTime;
+            if ((curTime - mLastUpdate) > 300) {
+                long diffTime = (curTime - mLastUpdate);
+                mLastUpdate = curTime;
 
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
@@ -502,12 +547,52 @@ public class FreeSlappingActivity extends Activity implements SensorEventListene
     @Override
     protected void onPause() {
         super.onPause();
-        senSensorManager.unregisterListener(this);
+        mSensorManager.unregisterListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "FreeSlapping Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.thebutts.slappybutt/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "FreeSlapping Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.thebutts.slappybutt/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 }

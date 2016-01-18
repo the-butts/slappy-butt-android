@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:focusableInTouchMode="false"
+    android:id="@+id/gesture_listener">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Draw me something"
+        android:id="@+id/textView"
+        android:textStyle="bold"
+        android:textSize="@dimen/abc_text_size_display_1_material"
+        android:textAlignment="center"
+        android:textColor="#260344" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="⭕   ♥   P   X"
+        android:id="@+id/textView2"
+        android:textSize="@dimen/abc_text_size_display_1_material"
+        android:textAlignment="center"
+        android:textColor="#63229b"
+        android:layout_gravity="center_horizontal" />
+
+    <android.gesture.GestureOverlayView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/gesture_overlay"
+        android:layout_weight="0.81"/>
+</LinearLayout>
