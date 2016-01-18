@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.thebutts.slappybutt.ActivityMainWithFragments;
 import com.thebutts.slappybutt.Common.Constants;
 import com.thebutts.slappybutt.Helpers.SwipeGestureDetector;
 import com.thebutts.slappybutt.R;
@@ -316,6 +318,15 @@ public class FreeSlappingFragment extends Fragment implements SensorEventListene
     }
 
     void setupUiEvents() {
+
+        Button goToMainMenuBtn = (Button) this.inflatedView.findViewById(R.id.btn_to_main_menu);
+        goToMainMenuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FreeSlappingFragment.this.onClickMainMenu((Button) v);
+            }
+        });
+
         this.gLibrary = GestureLibraries.fromRawResource(this.inflatedView.getContext(), R.raw.gestures);
 
         if (!this.gLibrary.load()) {
@@ -745,5 +756,9 @@ public class FreeSlappingFragment extends Fragment implements SensorEventListene
         }
 
         this.mMediaPlayer.start();
+    }
+
+    private void onClickMainMenu(Button v) {
+        ((ActivityMainWithFragments) getActivity()).loadMainMenu();
     }
 }

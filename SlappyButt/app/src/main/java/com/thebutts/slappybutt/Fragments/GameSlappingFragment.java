@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -351,6 +352,14 @@ public class GameSlappingFragment extends Fragment {
 //                }
 //            }
 //        });
+
+        Button goToMainMenuBtn = (Button) this.inflatedView.findViewById(R.id.btn_to_main_menu);
+        goToMainMenuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GameSlappingFragment.this.onClickMainMenu((Button) v);
+            }
+        });
 
 
         final GestureDetectorCompat doubleTapGestureDetector = new GestureDetectorCompat(getActivity(), new GestureDetector.SimpleOnGestureListener() {
@@ -678,6 +687,12 @@ public class GameSlappingFragment extends Fragment {
     public void onPause() {
         super.onPause();
 
+
+        if (this.mTimer != null){
+            this.mTimer.cancel();
+            this.mTimer = null;
+        }
+
         if (this.mMediaPlayer != null && (this.mMediaPlayer.isLooping() || this.mMediaPlayer.isPlaying())) {
             this.mMediaPlayer.stop();
             this.mMediaPlayer.release();
@@ -730,6 +745,10 @@ public class GameSlappingFragment extends Fragment {
         client.disconnect();
     }
 
+    private void onClickMainMenu(Button v) {
+
+        ((ActivityMainWithFragments) getActivity()).loadMainMenu();
+    }
 
     private void updateTimer(float time) {
         long secs = (long) (time / 1000);

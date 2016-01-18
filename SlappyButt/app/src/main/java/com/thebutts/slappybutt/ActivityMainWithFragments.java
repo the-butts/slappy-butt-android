@@ -1,5 +1,7 @@
 package com.thebutts.slappybutt;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Window;
@@ -219,5 +221,31 @@ public class ActivityMainWithFragments extends FragmentActivity {
 
             ActivityMainWithFragments.this.mMainMenuFragment = MainMenuFragment.newInstance();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        doExit();
+    }
+
+    private void doExit() {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                ActivityMainWithFragments.this);
+
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        alertDialog.setNegativeButton("No", null);
+
+        alertDialog.setMessage("Do you really want to stop slapping??");
+        alertDialog.setTitle("Slappy butt");
+        alertDialog.show();
     }
 }

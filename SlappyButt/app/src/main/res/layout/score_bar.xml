@@ -15,7 +15,7 @@
         android:background="#ab6800fa">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btn_to_main_menu"
             style="@style/button_common_custom_style"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

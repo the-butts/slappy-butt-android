@@ -75,10 +75,22 @@ public class MainMenuFragment extends Fragment {
                 MainMenuFragment.this.onClickNewGame((Button) v);
             }
         });
+
+        Button freeSlapBtn = (Button) this.inflatedView.findViewById(R.id.btn_mm_go_free_slapping);
+        freeSlapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainMenuFragment.this.onClickFreeSlap((Button) v);
+            }
+        });
     }
 
     private void onClickNewGame(Button v) {
         ((ActivityMainWithFragments) getActivity()).loadNewGame();
+    }
+
+    private void onClickFreeSlap(Button v) {
+        ((ActivityMainWithFragments) getActivity()).loadFreeSlapping();
     }
 
 
@@ -121,4 +133,6 @@ public class MainMenuFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }
